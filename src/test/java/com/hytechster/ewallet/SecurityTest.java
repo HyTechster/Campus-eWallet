@@ -4,6 +4,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -82,7 +83,18 @@ class SecurityTest extends IntegrationTest {
                         .param("recipientUserId", siti.getId().toString())
                         .param("amountSen", "100")
                         .param("idempotencyKey", UUID.randomUUID().toString()))
-                .andExpect(status().isForbidden());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/session-expired"));
         org.assertj.core.api.Assertions.assertThat(balanceOf(ali.getId())).isEqualTo(1000);
+        mvc.perform(get("/session-expired")).andExpect(status().isOk());
+    }
+
+    @Test
+    void amountsAcceptLowercaseRmPrefix() throws Exception {
+        User ali = newStudent("Ali");
+        mvc.perform(post("/wallet/topup/review").with(user(principal(ali))).with(csrf()).param("amount", "rm 5"))
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.content()
+                        .string(org.hamcrest.Matchers.containsString("Add RM 5.00")));
     }
 }

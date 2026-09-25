@@ -10,11 +10,13 @@
       <span th:text="${d.merchant().name}">Kafe Siswa</span>
       <span class="badge" th:text="${d.merchant().code}">KAFESISWA</span>
     </p>
-    <p class="hero-label" id="sales-label">Sales today</p>
-    <p class="balance num">
-      <span class="currency">RM</span>
-      <span class="amount" th:text="${@fmt.number(d.todaySales())}">342.50</span>
-    </p>
+    <div class="balance-card">
+      <p class="hero-label" id="sales-label">Sales today</p>
+      <p class="balance num">
+        <span class="currency">RM</span>
+        <span class="amount" th:text="${@fmt.number(d.todaySales())}">342.50</span>
+      </p>
+    </div>
   </section>
 
   <div class="bento pair reveal reveal-2">

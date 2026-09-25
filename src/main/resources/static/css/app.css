@@ -9,31 +9,36 @@
   --font-serif: "Instrument Serif", "Newsreader", Georgia, serif;
   --font-mono: "Geist Mono", "SF Mono", ui-monospace, Menlo, monospace;
 
-  --canvas: #f7f6f3;
+  /* Soft lavender canvas, violet brand, sunshine and mint accents. */
+  --canvas: #f7f6fd;
   --surface: #ffffff;
-  --surface-sunk: #f1f0ec;
-  --border: #eaeaea;
-  --border-strong: #d9d8d4;
-  --text: #2f3437;
-  --text-strong: #111111;
-  --muted: #787774;
-  --faint: #a5a4a0;
+  --surface-sunk: #f1effa;
+  --border: #e9e6f5;
+  --border-strong: #d6d2ea;
+  --text: #2b2840;
+  --text-strong: #16132b;
+  --muted: #6f6b86;
+  --faint: #a6a2bd;
 
-  --ink: #111111;
-  --ink-hover: #333333;
-  --on-ink: #ffffff;
+  --brand: #6c5ce7;          /* white text on this passes WCAG AA (4.9:1) */
+  --brand-hover: #5a4bd6;
+  --on-brand: #ffffff;
+  --brand-soft: #efecff;
+  --brand-text: #5646d9;
+  --sun: #ffc94a;
 
-  --green-bg: #edf3ec;
-  --green: #346538;
-  --red-bg: #fdebec;
-  --red: #9f2f2d;
-  --blue-bg: #e1f3fe;
-  --blue: #1f6c9f;
-  --yellow-bg: #fbf3db;
-  --yellow: #956400;
+  --green-bg: #e6f6ec;
+  --green: #1a7f45;
+  --red-bg: #fdeceb;
+  --red: #b93a34;
+  --blue-bg: #e6f0fd;
+  --blue: #2163c2;
+  --yellow-bg: #fff4d1;
+  --yellow: #946300;
 
-  --focus: #1f6c9f;
-  --shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --danger: #c23b34;
+  --focus: #6c5ce7;
+  --shadow-hover: 0 4px 14px rgba(76, 60, 200, 0.08);
 
   --radius-s: 6px;
   --radius-m: 8px;
@@ -57,31 +62,34 @@
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --canvas: #161615;
-    --surface: #1e1e1d;
-    --surface-sunk: #252524;
+    --canvas: #14121f;
+    --surface: #1c1a2b;
+    --surface-sunk: #252238;
     --border: rgba(255, 255, 255, 0.08);
     --border-strong: rgba(255, 255, 255, 0.16);
-    --text: #dcdbd8;
-    --text-strong: #f3f2ef;
-    --muted: #9b9a97;
-    --faint: #6f6e6b;
+    --text: #e3e0f2;
+    --text-strong: #f6f4ff;
+    --muted: #a09bba;
+    --faint: #6e6989;
 
-    --ink: #f3f2ef;
-    --ink-hover: #d6d5d1;
-    --on-ink: #111111;
+    --brand: #6c5ce7;
+    --brand-hover: #7b6cf0;
+    --on-brand: #ffffff;
+    --brand-soft: rgba(124, 108, 246, 0.18);
+    --brand-text: #b8afff;
+    --sun: #ffc94a;
 
-    --green-bg: rgba(111, 172, 117, 0.14);
-    --green: #8fc794;
-    --red-bg: rgba(224, 106, 102, 0.14);
-    --red: #f0a19e;
-    --blue-bg: rgba(94, 164, 214, 0.14);
-    --blue: #8cc4ea;
-    --yellow-bg: rgba(214, 170, 72, 0.14);
-    --yellow: #e2bf6d;
+    --green-bg: rgba(74, 200, 128, 0.15);
+    --green: #7fdca6;
+    --red-bg: rgba(240, 110, 100, 0.15);
+    --red: #ffa39c;
+    --blue-bg: rgba(90, 160, 240, 0.15);
+    --blue: #93c2ff;
+    --yellow-bg: rgba(255, 201, 74, 0.15);
+    --yellow: #ffd477;
 
-    --focus: #8cc4ea;
-    --shadow-hover: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --focus: #b8afff;
+    --shadow-hover: 0 4px 14px rgba(0, 0, 0, 0.35);
   }
 }
 
@@ -235,8 +243,8 @@ a:hover {
   width: 28px;
   height: 28px;
   border-radius: var(--radius-s);
-  background: var(--ink);
-  color: var(--on-ink);
+  background: var(--brand);
+  color: var(--on-brand);
 }
 
 .brand-mark .icon {
@@ -267,8 +275,8 @@ a:hover {
 }
 
 .nav a[aria-current="page"] {
-  color: var(--text-strong);
-  background: var(--surface-sunk);
+  color: var(--brand-text);
+  background: var(--brand-soft);
 }
 
 /* Admin is desktop first, but its nav still scrolls sideways on a phone. */
@@ -331,7 +339,7 @@ a:hover {
 }
 
 .tabbar a[aria-current="page"] {
-  color: var(--text-strong);
+  color: var(--brand-text);
 }
 
 .has-tabbar main {
@@ -415,7 +423,8 @@ main {
 
 .section-head a {
   font-size: 0.875rem;
-  color: var(--muted);
+  color: var(--brand-text);
+  text-decoration-color: currentColor;
 }
 
 /* ------------------------------------------------------------------ cards */
@@ -444,6 +453,10 @@ main {
 
 .bento.pair {
   grid-template-columns: 1fr 1fr;
+}
+
+.hero + .bento {
+  margin-top: var(--space-4);
 }
 
 .bento.pair .card {
@@ -502,18 +515,7 @@ main {
 /* ------------------------------------------------------------------ balance hero */
 
 .hero {
-  position: relative;
-  padding: var(--space-6) 0 var(--space-5);
-}
-
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: -40px 0 auto;
-  height: 260px;
-  z-index: -1;
-  pointer-events: none;
-  background: radial-gradient(closest-side, rgba(214, 170, 72, 0.07), transparent);
+  padding: var(--space-5) 0 0;
 }
 
 .hero-greeting {
@@ -522,7 +524,7 @@ main {
 }
 
 .hero-label {
-  margin-top: var(--space-5);
+  margin-top: 0;
   color: var(--muted);
   font-size: 0.8125rem;
   font-weight: 500;
@@ -554,6 +556,61 @@ main {
 
 .balance.medium .amount {
   font-size: clamp(2.25rem, 10vw, 3rem);
+}
+
+/* The balance card: the one big block of colour in the app, with a small sun in the corner. */
+.balance-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  margin-top: var(--space-3);
+  padding: var(--space-5);
+  border-radius: 16px;
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+.balance-card::before,
+.balance-card::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.balance-card::before {
+  width: 88px;
+  height: 88px;
+  top: -34px;
+  right: -22px;
+  background: var(--sun);
+}
+
+.balance-card::after {
+  width: 220px;
+  height: 220px;
+  right: -90px;
+  bottom: -150px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.balance-card .hero-label {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.balance-card .balance {
+  color: #ffffff;
+}
+
+.balance-card .balance .currency {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.balance-card .card-foot {
+  margin-top: var(--space-4);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.875rem;
 }
 
 .actions {
@@ -617,6 +674,11 @@ main {
   color: var(--text-strong);
 }
 
+.chip.violet {
+  background: var(--brand-soft);
+  color: var(--brand-text);
+}
+
 .chip.ok {
   background: var(--green-bg);
   color: var(--green);
@@ -658,7 +720,7 @@ main {
   transition: background-color 160ms ease;
 }
 
-a.txn:hover {
+a.txn[href]:hover {
   background: color-mix(in srgb, var(--surface-sunk) 60%, transparent);
 }
 
@@ -776,8 +838,8 @@ a.txn:hover {
   padding: 0 var(--space-5);
   border: 1px solid transparent;
   border-radius: var(--radius-s);
-  background: var(--ink);
-  color: var(--on-ink);
+  background: var(--brand);
+  color: var(--on-brand);
   font: inherit;
   font-weight: 500;
   text-decoration: none;
@@ -786,7 +848,7 @@ a.txn:hover {
 }
 
 .btn:hover {
-  background: var(--ink-hover);
+  background: var(--brand-hover);
 }
 
 .btn:active {
@@ -815,8 +877,12 @@ a.txn:hover {
 }
 
 .btn.danger {
-  background: var(--red);
+  background: var(--danger);
   color: #ffffff;
+}
+
+.btn.danger:hover {
+  background: #a8322c;
 }
 
 .btn.small {

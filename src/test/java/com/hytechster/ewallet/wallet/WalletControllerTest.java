@@ -119,6 +119,27 @@ class WalletControllerTest extends IntegrationTest {
     }
 
     @Test
+    void historyPagerLinkWorksWithEmptyFilters() throws Exception {
+        User ali = newStudent("Ali");
+        for (int i = 0; i < 22; i++) {
+            fund(ali, 100);
+        }
+        var asAli = user(principal(ali));
+
+        String html = mvc.perform(get("/wallet/history").with(asAli))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Page 1 of 2")))
+                .andReturn().getResponse().getContentAsString();
+        var matcher = java.util.regex.Pattern.compile("href=\"(/wallet/history\\?[^\"]*page=1[^\"]*)\"").matcher(html);
+        assertThat(matcher.find()).as("Older link on page 1").isTrue();
+        String older = matcher.group(1).replace("&amp;", "&");
+
+        mvc.perform(get(older).with(asAli))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("Page 2 of 2")));
+    }
+
+    @Test
     void pagesRender() throws Exception {
         User ali = newStudent("Ali");
         Merchant kafe = newMerchant("Kafe Render");

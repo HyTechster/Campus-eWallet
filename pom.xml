@@ -97,6 +97,13 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- dev (seed data, no template cache) only for ./mvnw spring-boot:run.
+                         A packaged jar runs with no profile, so the dev seed never reaches a server. -->
+                    <profiles>
+                        <profile>dev</profile>
+                    </profiles>
+                </configuration>
             </plugin>
         </plugins>
     </build>

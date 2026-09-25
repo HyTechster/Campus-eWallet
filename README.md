@@ -4,6 +4,21 @@ A campus e-wallet for top-ups, student-to-student transfers and merchant payment
 
 > Learning and portfolio project. No real money and no payment gateway. Top-ups are simulated.
 
+**Built with:** Java 21, Spring Boot 3.5, PostgreSQL 16, Flyway, Thymeleaf, Testcontainers.
+
+## Why Spring Boot
+
+This project has one requirement that can't bend: money must always be correct. That mattered more than how fast the pages could be built, and it's why Spring Boot was the pick.
+
+- **Transactions are declarative.** One `@Transactional` on a service method wraps the locking, the checks and the posting in a single database transaction. Any exception rolls all of it back, with no manual begin or commit to forget.
+- **Row locking is built in.** JPA's `PESSIMISTIC_WRITE` lock mode issues `SELECT ... FOR UPDATE` directly. The concurrency guarantee in "How money stays correct" rests on it.
+- **Security comes in the box.** Spring Security provides form login, BCrypt password hashing, CSRF protection on every form and role-based URL rules. You don't have to put these together from separate packages.
+- **Tests run against a real database.** Spring Boot's Testcontainers support (`@ServiceConnection`) starts a real PostgreSQL for the test suite from a single bean. Locking can't be tested on an in-memory stand-in like H2, which locks differently.
+- **Java's types suit money code.** Amounts are `long` sen, form input is Java records, and entry types are enums, so the compiler catches many mistakes before the code runs.
+- **It's common where money is handled.** Java and Spring are widely used in banking and payments, so the patterns here (double-entry ledger, pessimistic locking, idempotency keys) carry over to real systems.
+
+**The trade-off:** Spring Boot takes more code and configuration than a minimal setup, and it starts slower and uses more memory. For a project where correctness under concurrency is the whole point, that cost is worth paying.
+
 ## Run it
 
 You need Java 21+ and Docker running.
@@ -31,7 +46,7 @@ Every password is `campus123`.
 | Student | `haziq@campus.test` | `A22ME0004` |
 | Student | `meiling@campus.test` | `A22CS0005` |
 
-The seed lives in `src/main/resources/db/dev/V9__seed_dev.sql` and only runs with the `dev` profile, which is the default for `spring-boot:run`. To start again from a clean database, run `docker compose down -v`.
+The seed lives in `src/main/resources/db/dev/V9__seed_dev.sql` and only runs with the `dev` profile. `spring-boot:run` turns that profile on for you. A packaged jar runs without it, so the dev accounts never reach a server. To start again from a clean database, run `docker compose down -v`.
 
 ## How money stays correct
 

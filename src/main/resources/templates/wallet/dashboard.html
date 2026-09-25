@@ -8,11 +8,16 @@
   <section class="hero reveal" aria-labelledby="balance-label">
     <p class="hero-greeting">Hi, <span th:text="${#authentication.principal.firstName()}">Aisyah</span></p>
 
-    <p class="hero-label" id="balance-label">Available balance</p>
-    <p class="balance num">
-      <span class="currency">RM</span>
-      <span class="amount" th:text="${@fmt.number(dashboard.balance())}">128.50</span>
-    </p>
+    <div class="balance-card">
+      <p class="hero-label" id="balance-label">Available balance</p>
+      <p class="balance num">
+        <span class="currency">RM</span>
+        <span class="amount" th:text="${@fmt.number(dashboard.balance())}">128.50</span>
+      </p>
+      <p class="card-foot" th:if="${dashboard.user().studentId != null}">
+        Student ID <span class="mono" th:text="${dashboard.user().studentId}">A21CS0001</span>
+      </p>
+    </div>
 
     <div class="alert warn frozen-note" role="status" th:if="${dashboard.user().frozen}">
       <svg th:replace="~{fragments/icons :: icon('lock')}"></svg>
@@ -21,10 +26,10 @@
 
     <div class="actions">
       <a class="action" th:href="@{/wallet/topup}">
-        <span class="chip info"><svg th:replace="~{fragments/icons :: icon('plus')}"></svg></span>Top up
+        <span class="chip ok"><svg th:replace="~{fragments/icons :: icon('plus')}"></svg></span>Top up
       </a>
       <a class="action" th:href="@{/wallet/transfer}">
-        <span class="chip"><svg th:replace="~{fragments/icons :: icon('send')}"></svg></span>Send
+        <span class="chip violet"><svg th:replace="~{fragments/icons :: icon('send')}"></svg></span>Send
       </a>
       <a class="action" th:href="@{/wallet/pay}">
         <span class="chip warn"><svg th:replace="~{fragments/icons :: icon('store')}"></svg></span>Pay

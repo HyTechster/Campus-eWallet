@@ -18,4 +18,9 @@ public class HomeController {
             case USER -> "redirect:/wallet";
         };
     }
+
+    @GetMapping("/session-expired")
+    public String sessionExpired() {
+        return "result/expired";
+    }
 }

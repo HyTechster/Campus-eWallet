@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public final class Money {
 
     /** What a person may type in an amount field: whole ringgit with up to 2 decimals. */
-    public static final String INPUT_PATTERN = "^\\s*(RM\\s*)?\\d{1,7}(\\.\\d{1,2})?\\s*$";
+    public static final String INPUT_PATTERN = "(?i)^\\s*(RM\\s*)?\\d{1,7}(\\.\\d{1,2})?\\s*$";
 
     private static final Pattern INPUT = Pattern.compile(INPUT_PATTERN, Pattern.CASE_INSENSITIVE);
 

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Session expired · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <div class="result reveal" role="alert">
+    <span class="chip warn"><svg th:replace="~{fragments/icons :: icon('history')}"></svg></span>
+    <h1>Your session expired</h1>
+    <p>That page was open for too long, so we stopped it for your safety. Nothing was sent and your balance hasn't changed.</p>
+  </div>
+  <div class="btn-row">
+    <a class="btn" th:href="@{/}">Start again</a>
+  </div>
+</main>
+</body>
+</html>
