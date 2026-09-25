@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Confirm payment · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head reveal">
+    <p class="eyebrow">Check and confirm</p>
+    <h1>Pay this merchant?</h1>
+  </header>
+
+  <div class="card reveal reveal-2">
+    <div class="confirm-amount">
+      <p class="label">You're paying</p>
+      <p class="balance medium num">
+        <span class="currency">RM</span>
+        <span class="amount" th:text="${@fmt.number(preview.amount())}">6.50</span>
+      </p>
+    </div>
+    <dl class="summary">
+      <div class="summary-row">
+        <dt>To</dt>
+        <dd><span th:text="${preview.partyName()}">Kafe Siswa</span><span class="sub mono" th:text="${preview.partyHint()}">KAFESISWA</span></dd>
+      </div>
+      <div class="summary-row" th:if="${preview.note() != null}">
+        <dt>Note</dt>
+        <dd th:text="${preview.note()}">Order #42</dd>
+      </div>
+      <div class="summary-row">
+        <dt>Balance after</dt>
+        <dd class="num" th:text="${@fmt.money(preview.balanceAfter())}">RM 122.00</dd>
+      </div>
+    </dl>
+
+    <form th:action="@{/wallet/pay}" method="post" data-once>
+      <input type="hidden" name="code" th:value="${preview.partyHint()}">
+      <input type="hidden" name="amountSen" th:value="${preview.amount()}">
+      <input type="hidden" name="note" th:value="${preview.note()}">
+      <input type="hidden" name="idempotencyKey" th:value="${idempotencyKey}">
+      <div class="btn-row split">
+        <a class="btn ghost" th:href="@{/wallet/pay(code=${preview.partyHint()}, amount=${@fmt.plain(preview.amount())}, note=${preview.note()})}">Edit</a>
+        <button class="btn" type="submit" data-busy="Paying…"
+                th:text="|Pay ${@fmt.money(preview.amount())}|">Pay RM 6.50</button>
+      </div>
+    </form>
+  </div>
+</main>
+</body>
+</html>

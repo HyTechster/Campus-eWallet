@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Something went wrong · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <div class="result reveal" role="alert">
+    <span class="chip bad"><svg th:replace="~{fragments/icons :: icon('alert')}"></svg></span>
+    <h1 th:text="${status == 400} ? 'That request looks wrong' : 'Something went wrong'">Something went wrong</h1>
+    <p>It's on our side, not yours. If you were sending money, check your history before trying again.</p>
+  </div>
+  <div class="btn-row">
+    <a class="btn" th:href="@{/}">Back to home</a>
+  </div>
+</main>
+</body>
+</html>

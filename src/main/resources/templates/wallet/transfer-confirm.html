@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Confirm transfer · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head reveal">
+    <p class="eyebrow">Check and confirm</p>
+    <h1>Send this money?</h1>
+  </header>
+
+  <div class="card reveal reveal-2">
+    <div class="confirm-amount">
+      <p class="label">You're sending</p>
+      <p class="balance medium num">
+        <span class="currency">RM</span>
+        <span class="amount" th:text="${@fmt.number(preview.amount())}">10.00</span>
+      </p>
+    </div>
+    <dl class="summary">
+      <div class="summary-row">
+        <dt>To</dt>
+        <dd><span th:text="${preview.partyName()}">Siti Aminah</span><span class="sub" th:text="${preview.partyHint()}">si***@campus.edu.my</span></dd>
+      </div>
+      <div class="summary-row" th:if="${preview.note() != null}">
+        <dt>Note</dt>
+        <dd th:text="${preview.note()}">Nasi lemak</dd>
+      </div>
+      <div class="summary-row">
+        <dt>Balance after</dt>
+        <dd class="num" th:text="${@fmt.money(preview.balanceAfter())}">RM 118.50</dd>
+      </div>
+    </dl>
+
+    <form th:action="@{/wallet/transfer}" method="post" data-once>
+      <input type="hidden" name="recipientUserId" th:value="${preview.partyId()}">
+      <input type="hidden" name="amountSen" th:value="${preview.amount()}">
+      <input type="hidden" name="note" th:value="${preview.note()}">
+      <input type="hidden" name="idempotencyKey" th:value="${idempotencyKey}">
+      <div class="btn-row split">
+        <a class="btn ghost" th:href="@{/wallet/transfer(recipient=${form.recipient()}, amount=${@fmt.plain(preview.amount())}, note=${preview.note()})}">Edit</a>
+        <button class="btn" type="submit" data-busy="Sending…"
+                th:text="|Send ${@fmt.money(preview.amount())}|">Send RM 10.00</button>
+      </div>
+    </form>
+  </div>
+</main>
+</body>
+</html>

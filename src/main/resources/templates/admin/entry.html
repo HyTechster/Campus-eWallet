@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Entry · Campus Wallet Admin</title>
+</head>
+<body>
+<main class="wrap wide" th:with="e=${entry}">
+  <header class="page-head reveal">
+    <p class="eyebrow"><a th:href="@{/admin/entries}">Entries</a></p>
+    <h1 th:text="|Entry #${e.id()}|">Entry #1042</h1>
+  </header>
+
+  <div class="alert success" role="status" th:if="${done}">
+    <svg th:replace="~{fragments/icons :: icon('check')}"></svg><span th:text="${done}">Entry reversed.</span>
+  </div>
+
+  <div class="bento section-gap reveal reveal-2">
+    <section class="card span-3" aria-label="Summary">
+      <dl class="summary">
+        <div class="summary-row">
+          <dt>Type</dt>
+          <dd><span class="badge" th:classappend="${e.type().name() == 'REVERSAL'} ? 'yellow' : (${e.type().name() == 'TOPUP'} ? 'blue')" th:text="${e.type().label()}">Transfer</span></dd>
+        </div>
+        <div class="summary-row"><dt>Amount</dt><dd class="num" th:text="${@fmt.money(e.amount())}">RM 10.00</dd></div>
+        <div class="summary-row"><dt>When</dt><dd th:text="${@fmt.dateTime(e.createdAt())}">25 Sep 2026, 2:30 PM</dd></div>
+        <div class="summary-row"><dt>Created by</dt><dd th:text="${e.createdByName() ?: 'System'}">Aisyah Rahman</dd></div>
+        <div class="summary-row"><dt>Description</dt><dd th:text="${e.description() ?: '-'}">Lunch</dd></div>
+        <div class="summary-row"><dt>Idempotency key</dt><dd class="mono" th:text="${e.idempotencyKey()}">2b1f...</dd></div>
+        <div class="summary-row" th:if="${e.reversesEntryId() != null}">
+          <dt>Reverses</dt>
+          <dd><a class="mono" th:href="@{/admin/entries/{id}(id=${e.reversesEntryId()})}" th:text="|#${e.reversesEntryId()}|">#1001</a></dd>
+        </div>
+        <div class="summary-row" th:if="${e.reversedByEntryId() != null}">
+          <dt>Reversed by</dt>
+          <dd><a class="mono" th:href="@{/admin/entries/{id}(id=${e.reversedByEntryId()})}" th:text="|#${e.reversedByEntryId()}|">#1050</a></dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="card span-3" aria-labelledby="reverse-title">
+      <h2 id="reverse-title">Reverse this entry</h2>
+      <th:block th:if="${e.reversible()}">
+        <p class="stat-note">Posts a new entry with every line mirrored. The original stays in the ledger. It fails if a wallet no longer has enough money.</p>
+        <form class="form section-gap" th:action="@{/admin/entries/{id}/reverse/review(id=${e.id()})}" th:object="${form}" method="post" novalidate>
+          <div th:replace="~{fragments/ui :: form-errors}"></div>
+          <div class="field">
+            <label for="reason">Reason</label>
+            <textarea class="input" th:field="*{reason}" maxlength="150" placeholder="Sent to the wrong student by mistake"
+                      th:aria-invalid="${#fields.hasErrors('reason')}"></textarea>
+            <p th:replace="~{fragments/ui :: field-error('reason')}"></p>
+          </div>
+          <button class="btn ghost block" type="submit"><svg th:replace="~{fragments/icons :: icon('undo')}"></svg>Review reversal</button>
+        </form>
+      </th:block>
+      <p class="stat-note" th:if="${e.reversedByEntryId() != null}">This entry has already been reversed.</p>
+      <p class="stat-note" th:if="${e.type().name() == 'REVERSAL'}">Reversals can't be reversed. Post a new entry instead.</p>
+    </section>
+  </div>
+
+  <section class="section reveal reveal-3" aria-labelledby="lines-title">
+    <div class="section-head"><h2 id="lines-title">Ledger lines</h2></div>
+    <div class="card flush table-wrap">
+      <table>
+        <thead><tr><th>Account</th><th>Type</th><th class="right">Amount</th><th class="right">Balance after</th></tr></thead>
+        <tbody>
+        <tr th:each="l : ${e.lines()}">
+          <td><span th:text="${l.name()}">Aisyah Rahman</span><span class="sub mono" th:text="|Account #${l.accountId()}|">Account #4</span></td>
+          <td th:text="${l.accountType()}">USER_WALLET</td>
+          <td class="right num" th:classappend="${l.amount() > 0} ? 'pos'" th:text="${@fmt.signed(l.amount())}">+ RM 10.00</td>
+          <td class="right num" th:text="${@fmt.money(l.balanceAfter())}">RM 22.00</td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="2">Sum of lines</td>
+          <td class="right num" th:text="${@fmt.money(e.sum())}">RM 0.00</td>
+          <td></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+</body>
+</html>

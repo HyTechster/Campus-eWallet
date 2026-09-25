@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Confirm reversal · Campus Wallet Admin</title>
+</head>
+<body>
+<main class="wrap" th:with="e=${entry}">
+  <header class="page-head reveal">
+    <p class="eyebrow">Check and confirm</p>
+    <h1 th:text="|Reverse entry #${e.id()}?|">Reverse entry #1042?</h1>
+    <p class="lede">These lines will be posted as a new entry. The original stays in the ledger.</p>
+  </header>
+
+  <div class="card reveal reveal-2">
+    <dl class="summary">
+      <div class="summary-row" th:each="l : ${e.lines()}">
+        <dt th:text="${l.name()}">Aisyah Rahman</dt>
+        <dd class="num" th:classappend="${-l.amount() > 0} ? 'pos'" th:text="${@fmt.signed(-l.amount())}">+ RM 10.00</dd>
+      </div>
+      <div class="summary-row">
+        <dt>Reason</dt>
+        <dd th:text="${form.reason()}">Sent to the wrong student</dd>
+      </div>
+    </dl>
+
+    <form th:action="@{/admin/entries/{id}/reverse(id=${e.id()})}" method="post" data-once>
+      <input type="hidden" name="reason" th:value="${form.reason()}">
+      <input type="hidden" name="idempotencyKey" th:value="${idempotencyKey}">
+      <div class="btn-row split">
+        <a class="btn ghost" th:href="@{/admin/entries/{id}(id=${e.id()})}">Cancel</a>
+        <button class="btn danger" type="submit" data-busy="Posting…">Post reversal</button>
+      </div>
+    </form>
+  </div>
+</main>
+</body>
+</html>

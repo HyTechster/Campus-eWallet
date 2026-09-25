@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Top up · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head reveal">
+    <p class="eyebrow">Top up</p>
+    <h1>Add money</h1>
+    <p class="lede">This is a demo payment, so no real card is charged.</p>
+  </header>
+
+  <form class="card form reveal reveal-2" th:action="@{/wallet/topup/review}" th:object="${form}" method="post" novalidate>
+    <div th:replace="~{fragments/ui :: form-errors}"></div>
+
+    <div class="field">
+      <label for="amount">Amount</label>
+      <div class="money-input">
+        <span class="prefix">RM</span>
+        <input class="input" th:field="*{amount}" inputmode="decimal" autocomplete="off" placeholder="0.00"
+               aria-describedby="amount-hint" th:aria-invalid="${#fields.hasErrors('amount')}">
+      </div>
+      <p class="hint" id="amount-hint">
+        Balance <span class="num" th:text="${@fmt.money(balance)}">RM 12.00</span>.
+        Up to <span class="num" th:text="${@fmt.money(limit)}">RM 200.00</span> each time.
+      </p>
+      <p th:replace="~{fragments/ui :: field-error('amount')}"></p>
+    </div>
+
+    <div class="field">
+      <span class="label">Quick amounts</span>
+      <div class="quick">
+        <a class="btn ghost small num" th:each="q : ${ {'10.00', '20.00', '50.00', '100.00'} }"
+           th:href="@{/wallet/topup(amount=${q})}" th:text="|RM ${#strings.replace(q, '.00', '')}|">RM 20</a>
+      </div>
+    </div>
+
+    <button class="btn block" type="submit">Review top-up</button>
+  </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Home · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <section class="hero reveal" aria-labelledby="balance-label">
+    <p class="hero-greeting">Hi, <span th:text="${#authentication.principal.firstName()}">Aisyah</span></p>
+
+    <p class="hero-label" id="balance-label">Available balance</p>
+    <p class="balance num">
+      <span class="currency">RM</span>
+      <span class="amount" th:text="${@fmt.number(dashboard.balance())}">128.50</span>
+    </p>
+
+    <div class="alert warn frozen-note" role="status" th:if="${dashboard.user().frozen}">
+      <svg th:replace="~{fragments/icons :: icon('lock')}"></svg>
+      <span>Your wallet is frozen. You can still see your history and receive money. Visit the e-wallet office to sort it out.</span>
+    </div>
+
+    <div class="actions">
+      <a class="action" th:href="@{/wallet/topup}">
+        <span class="chip info"><svg th:replace="~{fragments/icons :: icon('plus')}"></svg></span>Top up
+      </a>
+      <a class="action" th:href="@{/wallet/transfer}">
+        <span class="chip"><svg th:replace="~{fragments/icons :: icon('send')}"></svg></span>Send
+      </a>
+      <a class="action" th:href="@{/wallet/pay}">
+        <span class="chip warn"><svg th:replace="~{fragments/icons :: icon('store')}"></svg></span>Pay
+      </a>
+    </div>
+  </section>
+
+  <section class="section reveal reveal-3" aria-labelledby="recent-title">
+    <div class="section-head">
+      <h2 id="recent-title">Recent activity</h2>
+      <a th:href="@{/wallet/history}" th:if="${!dashboard.recent().isEmpty()}">See all</a>
+    </div>
+    <div class="card flush">
+      <ul class="txns stagger" th:if="${!dashboard.recent().isEmpty()}">
+        <li th:each="line : ${dashboard.recent()}">
+          <a th:replace="~{fragments/ui :: txn(${line}, @{/wallet/receipt/{id}(id=${line.entryId()})})}"></a>
+        </li>
+      </ul>
+      <div class="empty" th:if="${dashboard.recent().isEmpty()}">
+        <span class="chip"><svg th:replace="~{fragments/icons :: icon('history')}"></svg></span>
+        <strong>Nothing here yet</strong>
+        <span>Top up to get started. Your payments and transfers will show up here.</span>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

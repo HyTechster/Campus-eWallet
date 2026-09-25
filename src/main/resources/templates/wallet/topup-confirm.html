@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Confirm top-up · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head reveal">
+    <p class="eyebrow">Check and confirm</p>
+    <h1>Add this money?</h1>
+  </header>
+
+  <div class="card reveal reveal-2">
+    <div class="confirm-amount">
+      <p class="label">You're adding</p>
+      <p class="balance medium num">
+        <span class="currency">RM</span>
+        <span class="amount" th:text="${@fmt.number(preview.amount())}">50.00</span>
+      </p>
+    </div>
+    <dl class="summary">
+      <div class="summary-row"><dt>To</dt><dd>Your wallet</dd></div>
+      <div class="summary-row">
+        <dt>Paid with</dt>
+        <dd>Demo card<span class="sub">No real money moves</span></dd>
+      </div>
+      <div class="summary-row">
+        <dt>Balance after</dt>
+        <dd class="num" th:text="${@fmt.money(preview.balanceAfter())}">RM 62.00</dd>
+      </div>
+    </dl>
+
+    <form th:action="@{/wallet/topup}" method="post" data-once>
+      <input type="hidden" name="amountSen" th:value="${preview.amount()}">
+      <input type="hidden" name="idempotencyKey" th:value="${idempotencyKey}">
+      <div class="btn-row split">
+        <a class="btn ghost" th:href="@{/wallet/topup(amount=${@fmt.plain(preview.amount())})}">Edit</a>
+        <button class="btn" type="submit" data-busy="Adding money…"
+                th:text="|Add ${@fmt.money(preview.amount())}|">Add RM 50.00</button>
+      </div>
+    </form>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Receipt · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap" th:with="line=${receipt.line()}, kind=${line.type().name()}">
+
+  <div class="result reveal" th:if="${done}" role="status">
+    <span class="chip ok"><svg th:replace="~{fragments/icons :: icon('check')}"></svg></span>
+    <h1 th:switch="${kind}">
+      <span th:case="'TOPUP'">Money added</span>
+      <span th:case="'TRANSFER'">Sent</span>
+      <span th:case="'PAYMENT'">Paid</span>
+      <span th:case="*">Done</span>
+    </h1>
+    <p th:if="${replayed}">You already did this one, so we didn't charge you twice. Here's the original.</p>
+    <p th:unless="${replayed}" th:switch="${kind}">
+      <span th:case="'TOPUP'">Your balance is ready to use.</span>
+      <span th:case="'TRANSFER'" th:text="|${line.counterparty()} has the money now.|">Siti has the money now.</span>
+      <span th:case="'PAYMENT'" th:text="|Show this screen at ${line.counterparty()} if they ask.|">Show this screen at the counter.</span>
+      <span th:case="*">All done.</span>
+    </p>
+  </div>
+
+  <header class="page-head reveal" th:unless="${done}">
+    <p class="eyebrow" th:text="${line.type().label()}">Transfer</p>
+    <h1>Transaction details</h1>
+  </header>
+
+  <div class="card reveal reveal-2">
+    <div class="confirm-amount">
+      <p class="label" th:text="${line.directionLabel()}">Money out</p>
+      <p class="balance medium num" th:classappend="${line.moneyIn()} ? 'pos'">
+        <span class="amount" th:text="${@fmt.signed(line.amount())}">&minus; RM 10.00</span>
+      </p>
+    </div>
+    <dl class="summary">
+      <div class="summary-row">
+        <dt>What</dt>
+        <dd th:text="${line.title()}">To Siti Aminah</dd>
+      </div>
+      <div class="summary-row" th:if="${line.note() != null}">
+        <dt>Note</dt>
+        <dd th:text="${line.note()}">Nasi lemak</dd>
+      </div>
+      <div class="summary-row">
+        <dt>When</dt>
+        <dd th:text="${@fmt.dateTime(line.createdAt())}">12 Sep 2026, 2:30 PM</dd>
+      </div>
+      <div class="summary-row">
+        <dt>Reference</dt>
+        <dd class="mono" th:text="|#${line.entryId()}|">#1042</dd>
+      </div>
+      <div class="summary-row">
+        <dt>Balance after</dt>
+        <dd class="num" th:text="${@fmt.money(line.balanceAfter())}">RM 118.50</dd>
+      </div>
+      <div class="summary-row">
+        <dt>Status</dt>
+        <dd>
+          <span class="badge green" th:if="${receipt.reversedByEntryId() == null}">
+            <svg th:replace="~{fragments/icons :: icon('check')}"></svg>Completed
+          </span>
+          <a th:if="${receipt.reversedByEntryId() != null}" th:href="@{/wallet/receipt/{id}(id=${receipt.reversedByEntryId()})}">
+            <span class="badge yellow"><svg th:replace="~{fragments/icons :: icon('undo')}"></svg>Reversed</span>
+          </a>
+        </dd>
+      </div>
+      <div class="summary-row" th:if="${line.reversesEntryId() != null}">
+        <dt>Reverses</dt>
+        <dd><a class="mono" th:href="@{/wallet/receipt/{id}(id=${line.reversesEntryId()})}" th:text="|#${line.reversesEntryId()}|">#1001</a></dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="btn-row split">
+    <a class="btn ghost" th:href="@{/wallet/history}">History</a>
+    <a class="btn" th:href="@{/wallet}">Done</a>
+  </div>
+</main>
+</body>
+</html>

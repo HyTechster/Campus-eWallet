@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Pay a merchant · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head reveal">
+    <p class="eyebrow">Pay</p>
+    <h1>Pay at the counter</h1>
+    <p class="lede">Enter the merchant code shown at the shop. You'll see the shop name before you pay.</p>
+  </header>
+
+  <form class="card form reveal reveal-2" th:action="@{/wallet/pay/review}" th:object="${form}" method="post" novalidate>
+    <div th:replace="~{fragments/ui :: form-errors}"></div>
+
+    <div class="field">
+      <label for="code">Merchant code</label>
+      <input class="input mono-input" th:field="*{code}" autocomplete="off" autocapitalize="characters"
+             spellcheck="false" placeholder="KAFESISWA" th:aria-invalid="${#fields.hasErrors('code')}">
+      <p th:replace="~{fragments/ui :: field-error('code')}"></p>
+    </div>
+
+    <div class="field">
+      <label for="amount">Amount</label>
+      <div class="money-input">
+        <span class="prefix">RM</span>
+        <input class="input" th:field="*{amount}" inputmode="decimal" autocomplete="off" placeholder="0.00"
+               aria-describedby="amount-hint" th:aria-invalid="${#fields.hasErrors('amount')}">
+      </div>
+      <p class="hint" id="amount-hint">
+        Balance <span class="num" th:text="${@fmt.money(balance)}">RM 128.50</span>.
+        Up to <span class="num" th:text="${@fmt.money(limit)}">RM 500.00</span> each time.
+      </p>
+      <p th:replace="~{fragments/ui :: field-error('amount')}"></p>
+    </div>
+
+    <div class="field">
+      <label for="note">Note <span class="muted">(optional)</span></label>
+      <input class="input" th:field="*{note}" maxlength="80" autocomplete="off" placeholder="Order #42"
+             th:aria-invalid="${#fields.hasErrors('note')}">
+      <p th:replace="~{fragments/ui :: field-error('note')}"></p>
+    </div>
+
+    <button class="btn block" type="submit">Review payment</button>
+  </form>
+</main>
+</body>
+</html>

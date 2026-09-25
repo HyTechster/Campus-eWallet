@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Payments · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head reveal">
+    <p class="eyebrow">Payments</p>
+    <h1>Money received</h1>
+    <p class="lede">Every payment to your shop, newest first. Reversed payments show as money out.</p>
+  </header>
+
+  <div class="card flush reveal reveal-2">
+    <ul class="txns stagger" th:if="${page.hasContent()}">
+      <li th:each="line : ${page.content}">
+        <a th:replace="~{fragments/ui :: txn(${line}, null)}"></a>
+      </li>
+    </ul>
+    <div class="empty" th:unless="${page.hasContent()}">
+      <span class="chip"><svg th:replace="~{fragments/icons :: icon('store')}"></svg></span>
+      <strong>No payments yet</strong>
+    </div>
+  </div>
+
+  <nav th:replace="~{fragments/ui :: pager(${page},
+          @{/merchant/payments(page=${page.number - 1})},
+          @{/merchant/payments(page=${page.number + 1})})}"></nav>
+</main>
+</body>
+</html>

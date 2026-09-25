@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Confirm counter top-up · Campus Wallet Admin</title>
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head reveal">
+    <p class="eyebrow">Check and confirm</p>
+    <h1>Record this cash top-up?</h1>
+  </header>
+
+  <div class="card reveal reveal-2">
+    <div class="confirm-amount">
+      <p class="label">Adding to their wallet</p>
+      <p class="balance medium num">
+        <span class="currency">RM</span>
+        <span class="amount" th:text="${@fmt.number(preview.amount())}">50.00</span>
+      </p>
+    </div>
+    <dl class="summary">
+      <div class="summary-row">
+        <dt>Student</dt>
+        <dd><span th:text="${preview.fullName()}">Aisyah Rahman</span><span class="sub" th:text="|${preview.studentId()} · ${preview.email()}|">A21CS0001</span></dd>
+      </div>
+      <div class="summary-row">
+        <dt>Balance now</dt>
+        <dd class="num" th:text="${@fmt.money(preview.balanceBefore())}">RM 12.00</dd>
+      </div>
+      <div class="summary-row">
+        <dt>Balance after</dt>
+        <dd class="num" th:text="${@fmt.money(preview.balanceAfter())}">RM 62.00</dd>
+      </div>
+    </dl>
+
+    <form th:action="@{/admin/topup}" method="post" data-once>
+      <input type="hidden" name="userId" th:value="${preview.userId()}">
+      <input type="hidden" name="amountSen" th:value="${preview.amount()}">
+      <input type="hidden" name="idempotencyKey" th:value="${idempotencyKey}">
+      <div class="btn-row split">
+        <a class="btn ghost" th:href="@{/admin/topup(recipient=${preview.email()})}">Edit</a>
+        <button class="btn" type="submit" data-busy="Recording…"
+                th:text="|Record ${@fmt.money(preview.amount())}|">Record RM 50.00</button>
+      </div>
+    </form>
+  </div>
+</main>
+</body>
+</html>

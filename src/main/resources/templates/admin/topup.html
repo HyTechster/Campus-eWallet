@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Counter top-up · Campus Wallet Admin</title>
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head reveal">
+    <p class="eyebrow">Admin</p>
+    <h1>Counter top-up</h1>
+    <p class="lede">For cash paid at the e-wallet office. Count the cash before you confirm.</p>
+  </header>
+
+  <form class="card form reveal reveal-2" th:action="@{/admin/topup/review}" th:object="${form}" method="post" novalidate>
+    <div th:replace="~{fragments/ui :: form-errors}"></div>
+
+    <div class="field">
+      <label for="recipient">Student email or student ID</label>
+      <input class="input" th:field="*{recipient}" autocomplete="off" autocapitalize="none" spellcheck="false"
+             th:aria-invalid="${#fields.hasErrors('recipient')}">
+      <p th:replace="~{fragments/ui :: field-error('recipient')}"></p>
+    </div>
+    <div class="field">
+      <label for="amount">Cash received</label>
+      <div class="money-input">
+        <span class="prefix">RM</span>
+        <input class="input" th:field="*{amount}" inputmode="decimal" autocomplete="off" placeholder="0.00"
+               aria-describedby="amount-hint" th:aria-invalid="${#fields.hasErrors('amount')}">
+      </div>
+      <p class="hint" id="amount-hint">Up to <span class="num" th:text="${@fmt.money(limit)}">RM 200.00</span> each time.</p>
+      <p th:replace="~{fragments/ui :: field-error('amount')}"></p>
+    </div>
+    <button class="btn block" type="submit">Review top-up</button>
+  </form>
+</main>
+</body>
+</html>

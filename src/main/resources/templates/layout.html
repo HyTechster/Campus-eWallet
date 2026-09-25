@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" th:fragment="page(title, content)"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title th:replace="${title}">Campus Wallet</title>
+  <meta name="theme-color" content="#f7f6f3" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#161615" media="(prefers-color-scheme: dark)">
+  <link rel="icon" type="image/svg+xml" th:href="@{/favicon.svg}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif&display=swap">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+  <script th:src="@{/js/app.js}" defer></script>
+</head>
+<body th:with="path=${currentPath ?: ''}" th:classappend="${#authorization.expression('hasAnyRole(''USER'',''MERCHANT'')')} ? 'has-tabbar'">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" th:href="@{/}">
+      <span class="brand-mark"><svg th:replace="~{fragments/icons :: icon('wallet')}"></svg></span>
+      <span>Campus Wallet</span>
+    </a>
+
+    <nav class="nav" aria-label="Main" sec:authorize="hasRole('USER')">
+      <a th:href="@{/wallet}" th:aria-current="${path == '/wallet'} ? 'page'">Home</a>
+      <a th:href="@{/wallet/topup}" th:aria-current="${#strings.startsWith(path, '/wallet/topup')} ? 'page'">Top up</a>
+      <a th:href="@{/wallet/transfer}" th:aria-current="${#strings.startsWith(path, '/wallet/transfer')} ? 'page'">Send</a>
+      <a th:href="@{/wallet/pay}" th:aria-current="${#strings.startsWith(path, '/wallet/pay')} ? 'page'">Pay</a>
+      <a th:href="@{/wallet/history}" th:aria-current="${#strings.startsWith(path, '/wallet/history') or #strings.startsWith(path, '/wallet/receipt')} ? 'page'">History</a>
+    </nav>
+
+    <nav class="nav" aria-label="Main" sec:authorize="hasRole('MERCHANT')">
+      <a th:href="@{/merchant}" th:aria-current="${path == '/merchant'} ? 'page'">Today</a>
+      <a th:href="@{/merchant/payments}" th:aria-current="${#strings.startsWith(path, '/merchant/payments')} ? 'page'">Payments</a>
+    </nav>
+
+    <nav class="nav always" aria-label="Main" sec:authorize="hasRole('ADMIN')">
+      <a th:href="@{/admin}" th:aria-current="${path == '/admin'} ? 'page'">Reports</a>
+      <a th:href="@{/admin/users}" th:aria-current="${#strings.startsWith(path, '/admin/users')} ? 'page'">Users</a>
+      <a th:href="@{/admin/topup}" th:aria-current="${#strings.startsWith(path, '/admin/topup')} ? 'page'">Counter top-up</a>
+      <a th:href="@{/admin/entries}" th:aria-current="${#strings.startsWith(path, '/admin/entries')} ? 'page'">Entries</a>
+    </nav>
+
+    <div class="topbar-end" sec:authorize="isAuthenticated()">
+      <span class="who" th:text="${#authentication.principal.fullName}">Aisyah Rahman</span>
+      <form th:action="@{/logout}" method="post">
+        <button class="btn link" type="submit">
+          <svg th:replace="~{fragments/icons :: icon('logout')}"></svg><span>Log out</span>
+        </button>
+      </form>
+    </div>
+  </div>
+</header>
+
+<th:block th:replace="${content}"></th:block>
+
+<nav class="tabbar" aria-label="Wallet" sec:authorize="hasRole('USER')">
+  <a th:href="@{/wallet}" th:aria-current="${path == '/wallet'} ? 'page'">
+    <svg th:replace="~{fragments/icons :: icon('home')}"></svg>Home
+  </a>
+  <a th:href="@{/wallet/topup}" th:aria-current="${#strings.startsWith(path, '/wallet/topup')} ? 'page'">
+    <svg th:replace="~{fragments/icons :: icon('plus')}"></svg>Top up
+  </a>
+  <a th:href="@{/wallet/transfer}" th:aria-current="${#strings.startsWith(path, '/wallet/transfer')} ? 'page'">
+    <svg th:replace="~{fragments/icons :: icon('send')}"></svg>Send
+  </a>
+  <a th:href="@{/wallet/pay}" th:aria-current="${#strings.startsWith(path, '/wallet/pay')} ? 'page'">
+    <svg th:replace="~{fragments/icons :: icon('store')}"></svg>Pay
+  </a>
+  <a th:href="@{/wallet/history}" th:aria-current="${#strings.startsWith(path, '/wallet/history') or #strings.startsWith(path, '/wallet/receipt')} ? 'page'">
+    <svg th:replace="~{fragments/icons :: icon('history')}"></svg>History
+  </a>
+</nav>
+
+<nav class="tabbar tabs-2" aria-label="Merchant" sec:authorize="hasRole('MERCHANT')">
+  <a th:href="@{/merchant}" th:aria-current="${path == '/merchant'} ? 'page'">
+    <svg th:replace="~{fragments/icons :: icon('chart')}"></svg>Today
+  </a>
+  <a th:href="@{/merchant/payments}" th:aria-current="${#strings.startsWith(path, '/merchant/payments')} ? 'page'">
+    <svg th:replace="~{fragments/icons :: icon('list')}"></svg>Payments
+  </a>
+</nav>
+
+</body>
+</html>

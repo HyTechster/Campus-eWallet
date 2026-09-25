@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Not completed · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <div class="result reveal" role="alert">
+    <span class="chip bad"><svg th:replace="~{fragments/icons :: icon('x')}"></svg></span>
+    <h1 th:text="${heading}">That didn't go through</h1>
+    <p th:text="${message}">Not enough balance for this transfer.</p>
+  </div>
+  <div class="card sunk reveal reveal-2">
+    <p class="small muted">Nothing was posted, so no balance has changed.</p>
+  </div>
+  <div class="btn-row split reveal reveal-3">
+    <a class="btn ghost" th:href="@{/}">Home</a>
+    <a class="btn" th:href="@{${backUrl}}">Try again</a>
+  </div>
+</main>
+</body>
+</html>

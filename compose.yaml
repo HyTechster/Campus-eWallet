@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ewallet
+      POSTGRES_USER: ewallet
+      POSTGRES_PASSWORD: ewallet
+    ports:
+      - "5432"
+    volumes:
+      - ewallet-data:/var/lib/postgresql/data
+
+volumes:
+  ewallet-data:

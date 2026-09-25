@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- One transaction row. Money in vs out is shown by sign, a text label and colour. -->
+<a th:fragment="txn(line, href)" class="txn" th:href="${href}">
+  <span class="chip" th:classappend="${line.moneyIn()} ? 'in' : 'out'">
+    <svg th:replace="~{fragments/icons :: icon(${line.icon()})}"></svg>
+  </span>
+  <span class="txn-main">
+    <span class="txn-title" th:text="${line.title()}">To Siti Aminah</span>
+    <span class="txn-meta">
+      <span th:text="${@fmt.dateTime(line.createdAt())}">12 Sep 2026, 2:30 PM</span>
+      <span th:if="${line.note() != null}" th:text="| · ${line.note()}|"> · Lunch</span>
+    </span>
+  </span>
+  <span class="txn-amount" th:classappend="${line.moneyIn()} ? 'money-in'">
+    <span class="value num" th:text="${@fmt.signed(line.amount())}">+ RM 10.00</span>
+    <span class="dir" th:text="${line.directionLabel()}">Money in</span>
+  </span>
+</a>
+
+<!-- Previous / next pager. prevUrl and nextUrl are built by the caller so filters survive. -->
+<nav th:fragment="pager(page, prevUrl, nextUrl)" class="pager" aria-label="Pages" th:if="${page.totalPages > 1}">
+  <span class="spacer">
+    <a class="btn ghost small" th:if="${page.hasPrevious()}" th:href="${prevUrl}">
+      <svg th:replace="~{fragments/icons :: icon('chevron-left')}"></svg>Newer
+    </a>
+  </span>
+  <span class="num" th:text="|Page ${page.number + 1} of ${page.totalPages}|">Page 1 of 3</span>
+  <span class="spacer right-align">
+    <a class="btn ghost small" th:if="${page.hasNext()}" th:href="${nextUrl}">
+      Older<svg th:replace="~{fragments/icons :: icon('chevron-right')}"></svg>
+    </a>
+  </span>
+</nav>
+
+<!-- Global (non-field) form errors, e.g. "Not enough balance". -->
+<div th:fragment="form-errors" class="alert error" role="alert" th:if="${#fields.hasGlobalErrors()}">
+  <svg th:replace="~{fragments/icons :: icon('alert')}"></svg>
+  <span><th:block th:each="err : ${#fields.globalErrors()}"><span th:text="${err}">Not enough balance.</span> </th:block></span>
+</div>
+
+<!-- Error text under one field. -->
+<p th:fragment="field-error(name)" class="field-error" th:if="${#fields.hasErrors(name)}" th:id="|${name}-error|">
+  <svg th:replace="~{fragments/icons :: icon('alert')}"></svg>
+  <span th:errors="*{__${name}__}">Enter an amount</span>
+</p>
+
+</body>
+</html>

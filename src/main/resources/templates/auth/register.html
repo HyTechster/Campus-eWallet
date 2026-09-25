@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Create a wallet · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap auth">
+  <header class="page-head reveal">
+    <h1>Create your wallet</h1>
+    <p class="lede">For students. It takes a minute and starts at RM 0.00.</p>
+  </header>
+
+  <form class="card form reveal reveal-2" th:action="@{/register}" th:object="${form}" method="post" novalidate data-once>
+    <div th:replace="~{fragments/ui :: form-errors}"></div>
+
+    <div class="field">
+      <label for="fullName">Full name</label>
+      <input class="input" th:field="*{fullName}" autocomplete="name" required
+             th:aria-invalid="${#fields.hasErrors('fullName')}">
+      <p th:replace="~{fragments/ui :: field-error('fullName')}"></p>
+    </div>
+    <div class="field">
+      <label for="email">Email</label>
+      <input class="input" th:field="*{email}" type="email" autocomplete="email" required
+             th:aria-invalid="${#fields.hasErrors('email')}">
+      <p th:replace="~{fragments/ui :: field-error('email')}"></p>
+    </div>
+    <div class="field">
+      <label for="studentId">Student ID</label>
+      <input class="input" th:field="*{studentId}" autocomplete="off" autocapitalize="characters" required
+             th:aria-invalid="${#fields.hasErrors('studentId')}" aria-describedby="studentId-hint">
+      <p class="hint" id="studentId-hint">Friends can find you by this or your email.</p>
+      <p th:replace="~{fragments/ui :: field-error('studentId')}"></p>
+    </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input class="input" th:field="*{password}" type="password" autocomplete="new-password" required
+             th:aria-invalid="${#fields.hasErrors('password')}" aria-describedby="password-hint">
+      <p class="hint" id="password-hint">At least 8 characters.</p>
+      <p th:replace="~{fragments/ui :: field-error('password')}"></p>
+    </div>
+    <button class="btn block" type="submit" data-busy="Creating…">Create wallet</button>
+  </form>
+
+  <p class="auth-foot reveal reveal-3">Already have one? <a th:href="@{/login}">Log in</a></p>
+</main>
+</body>
+</html>

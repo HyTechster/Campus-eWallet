@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Reports · Campus Wallet Admin</title>
+</head>
+<body>
+<main class="wrap wide" th:with="r=${reports}, rec=${reports.reconciliation()}">
+  <header class="page-head reveal">
+    <p class="eyebrow">Admin</p>
+    <h1>Reports</h1>
+  </header>
+
+  <div class="bento reveal reveal-2">
+    <div class="card span-2">
+      <p class="stat-label">Reconciliation</p>
+      <p class="stat-value">
+        <span class="badge green" th:if="${rec.passed()}"><svg th:replace="~{fragments/icons :: icon('check')}"></svg>Pass</span>
+        <span class="badge red" th:unless="${rec.passed()}"><svg th:replace="~{fragments/icons :: icon('x')}"></svg>Fail</span>
+      </p>
+      <p class="stat-note" th:text="${rec.passed()} ? 'Every balance matches its ledger lines and the books sum to zero.' : 'The books do not match. See the details below.'">
+        Every balance matches its ledger lines.
+      </p>
+      <ul class="checklist num">
+        <li><span>Accounts checked</span><span th:text="${rec.accountCount()}">12</span></li>
+        <li><span>Entries checked</span><span th:text="${rec.entryCount()}">240</span></li>
+        <li><span>Sum of all balances</span><span th:text="${@fmt.money(rec.balanceTotal())}">RM 0.00</span></li>
+        <li><span>Checked</span><span th:text="${@fmt.time(rec.checkedAt())}">4:12 PM</span></li>
+      </ul>
+    </div>
+    <div class="card span-2">
+      <p class="stat-label">Held in student wallets</p>
+      <p class="stat-value num" th:text="${@fmt.money(r.holdings().userWallets())}">RM 1,204.00</p>
+      <p class="stat-note" th:text="|Across ${r.holdings().userCount()} wallets|">Across 5 wallets</p>
+    </div>
+    <div class="card span-2">
+      <p class="stat-label">Held in merchant wallets</p>
+      <p class="stat-value num" th:text="${@fmt.money(r.holdings().merchantWallets())}">RM 540.50</p>
+      <p class="stat-note" th:text="|Across ${r.holdings().merchantCount()} merchants. Total held ${@fmt.money(r.holdings().total())}.|">Across 2 merchants</p>
+    </div>
+  </div>
+
+  <div class="card section" th:unless="${rec.passed()}" role="alert">
+    <div class="alert error"><svg th:replace="~{fragments/icons :: icon('alert')}"></svg><span>Reconciliation failed. Do not post new entries until this is explained.</span></div>
+    <div class="table-wrap" th:if="${!rec.mismatches().isEmpty()}">
+      <table>
+        <thead><tr><th>Account</th><th>Type</th><th class="right">Cached balance</th><th class="right">Ledger sum</th></tr></thead>
+        <tbody>
+        <tr th:each="m : ${rec.mismatches()}">
+          <td class="mono" th:text="|#${m.accountId()}|">#4</td>
+          <td th:text="${m.type()}">USER_WALLET</td>
+          <td class="right num" th:text="${@fmt.money(m.balance())}">RM 10.00</td>
+          <td class="right num" th:text="${@fmt.money(m.ledgerSum())}">RM 9.00</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="stat-note" th:if="${!rec.unbalancedEntries().isEmpty()}"
+       th:text="|Entries that don't sum to zero: ${rec.unbalancedEntries()}|">Unbalanced entries</p>
+    <p class="stat-note" th:if="${rec.negativeWallets() > 0}" th:text="|Wallets below zero: ${rec.negativeWallets()}|"></p>
+  </div>
+
+  <section class="section reveal reveal-3" aria-labelledby="daily-title">
+    <div class="section-head">
+      <h2 id="daily-title">Last 14 days</h2>
+      <a th:href="@{/admin/entries}">All entries</a>
+    </div>
+    <div class="card flush table-wrap">
+      <table>
+        <thead>
+        <tr>
+          <th>Day</th>
+          <th class="right" th:each="t : ${types}" th:text="${t.label()}">Top up</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="day : ${r.days()}">
+          <td th:text="${#temporals.format(day.day(), 'EEE, d MMM')}">Fri, 25 Sep</td>
+          <td class="right num" th:each="t : ${types}" th:with="c=${day.cell(t)}">
+            <span th:if="${c.count() > 0}" th:text="${@fmt.money(c.total())}">RM 150.00</span>
+            <span class="sub" th:if="${c.count() > 0}" th:text="${c.count() == 1} ? '1 entry' : |${c.count()} entries|">3 entries</span>
+            <span class="muted" th:if="${c.count() == 0}">-</span>
+          </td>
+        </tr>
+        <tr th:if="${r.days().isEmpty()}">
+          <td th:colspan="${types.length + 1}" class="muted">No activity in the last 14 days.</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="bento section">
+    <section class="card flush span-4" aria-labelledby="merchants-title">
+      <div class="section-head card-pad">
+        <h2 id="merchants-title">Top merchants</h2>
+        <span class="muted small">Net sales, all time</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Merchant</th><th class="right">Payments</th><th class="right">Net sales</th></tr></thead>
+          <tbody>
+          <tr th:each="m : ${r.topMerchants()}">
+            <td><span th:text="${m.name()}">Kafe Siswa</span><span class="sub mono" th:text="${m.code()}">KAFESISWA</span></td>
+            <td class="right num" th:text="${m.payments()}">120</td>
+            <td class="right num" th:text="${@fmt.money(m.netSales())}">RM 820.50</td>
+          </tr>
+          <tr th:if="${r.topMerchants().isEmpty()}"><td colspan="3" class="muted">No merchants yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card span-2" aria-labelledby="export-title">
+      <h2 id="export-title">Export entries</h2>
+      <p class="stat-note">One row per ledger line, as CSV. Dates are Malaysia time.</p>
+      <form class="form export-form" th:action="@{/admin/export.csv}" method="get">
+        <div class="field">
+          <label for="from">From</label>
+          <input class="input" type="date" id="from" name="from" required th:value="${monthStart}">
+        </div>
+        <div class="field">
+          <label for="to">To</label>
+          <input class="input" type="date" id="to" name="to" required th:value="${today}">
+        </div>
+        <button class="btn ghost block" type="submit">
+          <svg th:replace="~{fragments/icons :: icon('download')}"></svg>Download CSV
+        </button>
+      </form>
+    </section>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>History · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head reveal">
+    <p class="eyebrow">History</p>
+    <h1>Every ringgit, in and out</h1>
+  </header>
+
+  <form class="card filters reveal reveal-2" th:action="@{/wallet/history}" method="get" role="search">
+    <div class="field">
+      <label for="type">Type</label>
+      <select class="input" id="type" name="type">
+        <option value="">All types</option>
+        <option th:each="t : ${types}" th:value="${t}" th:text="${t.label()}" th:selected="${t == type}">Top up</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="from">From</label>
+      <input class="input" type="date" id="from" name="from" th:value="${from}">
+    </div>
+    <div class="field">
+      <label for="to">To</label>
+      <input class="input" type="date" id="to" name="to" th:value="${to}">
+    </div>
+    <div class="btn-cell">
+      <button class="btn ghost small" type="submit">Filter</button>
+      <a class="btn link" th:href="@{/wallet/history}" th:if="${type != null or from != null or to != null}">Clear</a>
+    </div>
+  </form>
+
+  <section class="section reveal reveal-3" aria-label="Transactions">
+    <div class="card flush">
+      <ul class="txns stagger" th:if="${page.hasContent()}">
+        <li th:each="line : ${page.content}">
+          <a th:replace="~{fragments/ui :: txn(${line}, @{/wallet/receipt/{id}(id=${line.entryId()})})}"></a>
+        </li>
+      </ul>
+      <div class="empty" th:unless="${page.hasContent()}">
+        <span class="chip"><svg th:replace="~{fragments/icons :: icon('search')}"></svg></span>
+        <strong>No transactions found</strong>
+        <span th:if="${type != null or from != null or to != null}">Try a different type or date range.</span>
+        <span th:unless="${type != null or from != null or to != null}">Your top-ups, transfers and payments will appear here.</span>
+      </div>
+    </div>
+
+    <nav th:replace="~{fragments/ui :: pager(${page},
+            @{/wallet/history(type=${type}, from=${from}, to=${to}, page=${page.number - 1})},
+            @{/wallet/history(type=${type}, from=${from}, to=${to}, page=${page.number + 1})})}"></nav>
+  </section>
+</main>
+</body>
+</html>

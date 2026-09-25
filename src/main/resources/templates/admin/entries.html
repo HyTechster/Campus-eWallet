@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Entries · Campus Wallet Admin</title>
+</head>
+<body>
+<main class="wrap wide">
+  <header class="page-head reveal">
+    <p class="eyebrow">Admin</p>
+    <h1>Journal entries</h1>
+    <p class="lede">The ledger is append-only. To fix a mistake, open the entry and post a reversal.</p>
+  </header>
+
+  <form class="card filters reveal reveal-2" th:action="@{/admin/entries}" method="get" role="search">
+    <div class="field">
+      <label for="type">Type</label>
+      <select class="input" id="type" name="type">
+        <option value="">All types</option>
+        <option th:each="t : ${types}" th:value="${t}" th:text="${t.label()}" th:selected="${t == type}">Top up</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="from">From</label>
+      <input class="input" type="date" id="from" name="from" th:value="${from}">
+    </div>
+    <div class="field">
+      <label for="to">To</label>
+      <input class="input" type="date" id="to" name="to" th:value="${to}">
+    </div>
+    <div class="btn-cell">
+      <button class="btn ghost small" type="submit">Filter</button>
+      <a class="btn link" th:href="@{/admin/entries}" th:if="${type != null or from != null or to != null}">Clear</a>
+    </div>
+  </form>
+
+  <div class="card flush table-wrap section reveal reveal-3">
+    <table>
+      <thead>
+      <tr><th>Entry</th><th>When</th><th>Type</th><th>Description</th><th class="right">Amount</th></tr>
+      </thead>
+      <tbody>
+      <tr th:each="e : ${page.content}">
+        <td><a class="mono" th:href="@{/admin/entries/{id}(id=${e.id()})}" th:text="|#${e.id()}|">#1042</a></td>
+        <td class="num" th:text="${@fmt.dateTime(e.createdAt())}">25 Sep 2026, 2:30 PM</td>
+        <td>
+          <span class="badge" th:classappend="${e.type().name() == 'REVERSAL'} ? 'yellow' : (${e.type().name() == 'TOPUP'} ? 'blue')"
+                th:text="${e.type().label()}">Transfer</span>
+        </td>
+        <td th:text="${e.description() ?: '-'}">Lunch</td>
+        <td class="right num" th:text="${@fmt.money(e.amount())}">RM 10.00</td>
+      </tr>
+      <tr th:unless="${page.hasContent()}"><td colspan="5" class="muted">No entries match.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <nav th:replace="~{fragments/ui :: pager(${page},
+          @{/admin/entries(type=${type}, from=${from}, to=${to}, page=${page.number - 1})},
+          @{/admin/entries(type=${type}, from=${from}, to=${to}, page=${page.number + 1})})}"></nav>
+</main>
+</body>
+</html>

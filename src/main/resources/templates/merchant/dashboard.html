@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Today · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap" th:with="d=${dashboard}">
+  <section class="hero reveal" aria-labelledby="sales-label">
+    <p class="hero-greeting">
+      <span th:text="${d.merchant().name}">Kafe Siswa</span>
+      <span class="badge" th:text="${d.merchant().code}">KAFESISWA</span>
+    </p>
+    <p class="hero-label" id="sales-label">Sales today</p>
+    <p class="balance num">
+      <span class="currency">RM</span>
+      <span class="amount" th:text="${@fmt.number(d.todaySales())}">342.50</span>
+    </p>
+  </section>
+
+  <div class="bento pair reveal reveal-2">
+    <div class="card span-3">
+      <p class="stat-label">Payments today</p>
+      <p class="stat-value num" th:text="${d.todayCount()}">41</p>
+    </div>
+    <div class="card span-3">
+      <p class="stat-label">Wallet balance</p>
+      <p class="stat-value num" th:text="${@fmt.money(d.balance())}">RM 2,310.00</p>
+    </div>
+  </div>
+
+  <section class="section reveal reveal-3" aria-labelledby="recent-title">
+    <div class="section-head">
+      <h2 id="recent-title">Latest payments</h2>
+      <a th:href="@{/merchant/payments}" th:if="${!d.recent().isEmpty()}">See all</a>
+    </div>
+    <div class="card flush">
+      <ul class="txns stagger" th:if="${!d.recent().isEmpty()}">
+        <li th:each="line : ${d.recent()}">
+          <a th:replace="~{fragments/ui :: txn(${line}, null)}"></a>
+        </li>
+      </ul>
+      <div class="empty" th:if="${d.recent().isEmpty()}">
+        <span class="chip"><svg th:replace="~{fragments/icons :: icon('store')}"></svg></span>
+        <strong>No payments yet</strong>
+        <span th:text="|Students pay you with code ${d.merchant().code}.|">Students pay you with your merchant code.</span>
+      </div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

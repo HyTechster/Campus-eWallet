@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>No access · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <div class="result reveal">
+    <span class="chip warn"><svg th:replace="~{fragments/icons :: icon('lock')}"></svg></span>
+    <h1>This page isn't for your account</h1>
+    <p>You're logged in, but this area belongs to a different role.</p>
+  </div>
+  <div class="btn-row">
+    <a class="btn" th:href="@{/}">Back to home</a>
+  </div>
+</main>
+</body>
+</html>

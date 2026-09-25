@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Not found · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap">
+  <div class="result reveal">
+    <span class="chip"><svg th:replace="~{fragments/icons :: icon('search')}"></svg></span>
+    <h1>We couldn't find that</h1>
+    <p>The page or transaction doesn't exist, or it isn't yours to see.</p>
+  </div>
+  <div class="btn-row">
+    <a class="btn" th:href="@{/}">Back to home</a>
+  </div>
+</main>
+</body>
+</html>

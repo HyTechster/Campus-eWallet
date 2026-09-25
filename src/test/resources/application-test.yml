@@ -1,0 +1,8 @@
+spring:
+  docker:
+    compose:
+      enabled: false
+
+logging:
+  level:
+    com.hytechster.ewallet.common.GlobalExceptionHandler: error

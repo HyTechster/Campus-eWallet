@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: campus-ewallet
+  profiles:
+    default: dev
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        default_batch_fetch_size: 50
+  flyway:
+    locations: classpath:db/migration
+  thymeleaf:
+    cache: true
+  docker:
+    compose:
+      lifecycle-management: start-only
+
+server:
+  port: 8080
+  error:
+    include-stacktrace: never
+    include-message: never
+    include-exception: false
+    include-binding-errors: never
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: lax
+
+ewallet:
+  display-zone: Asia/Kuala_Lumpur
+  limits:
+    # All amounts in sen. RM 200 = 20000.
+    top-up-max: 20000
+    transfer-max: 50000
+    payment-max: 50000
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  flyway:
+    locations: classpath:db/migration,classpath:db/dev
+  thymeleaf:
+    cache: false

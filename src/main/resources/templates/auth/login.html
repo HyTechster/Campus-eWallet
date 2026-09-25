@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Log in · Campus Wallet</title>
+</head>
+<body>
+<main class="wrap auth">
+  <header class="page-head reveal">
+    <h1>Welcome back</h1>
+    <p class="lede">Log in to pay, send and top up on campus.</p>
+  </header>
+
+  <div class="card stack reveal reveal-2">
+    <div class="alert error" role="alert" th:if="${param.error}">
+      <svg th:replace="~{fragments/icons :: icon('alert')}"></svg>
+      <span>That email and password don't match. Try again.</span>
+    </div>
+    <div class="alert success" role="status" th:if="${registered}">
+      <svg th:replace="~{fragments/icons :: icon('check')}"></svg>
+      <span>Your wallet is ready. Log in with <strong th:text="${registered}">you@campus.edu.my</strong>.</span>
+    </div>
+    <div class="alert info" role="status" th:if="${param.logout}">
+      <svg th:replace="~{fragments/icons :: icon('info')}"></svg>
+      <span>You've logged out.</span>
+    </div>
+
+    <form class="form" th:action="@{/login}" method="post">
+      <div class="field">
+        <label for="username">Email</label>
+        <input class="input" id="username" name="username" type="email" autocomplete="username" required
+               th:value="${registered}">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input class="input" id="password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn block" type="submit">Log in</button>
+    </form>
+  </div>
+
+  <p class="auth-foot reveal reveal-3">New here? <a th:href="@{/register}">Create a wallet</a></p>
+</main>
+</body>
+</html>

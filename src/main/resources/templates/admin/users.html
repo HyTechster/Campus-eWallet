@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: page(~{::title}, ~{::main})}">
+<head>
+  <title>Users · Campus Wallet Admin</title>
+</head>
+<body>
+<main class="wrap wide">
+  <header class="page-head reveal">
+    <p class="eyebrow">Admin</p>
+    <h1>Users</h1>
+  </header>
+
+  <div class="alert success section-gap" role="status" th:if="${notice}">
+    <svg th:replace="~{fragments/icons :: icon('check')}"></svg><span th:text="${notice}">Wallet frozen.</span>
+  </div>
+
+  <form class="card search-bar reveal reveal-2" th:action="@{/admin/users}" method="get" role="search">
+    <label class="visually-hidden" for="q">Search users</label>
+    <input class="input" id="q" name="q" th:value="${q}" placeholder="Search by name, email or student ID" autocomplete="off">
+    <button class="btn" type="submit"><svg th:replace="~{fragments/icons :: icon('search')}"></svg>Search</button>
+  </form>
+
+  <div class="card flush table-wrap section reveal reveal-3">
+    <table>
+      <thead>
+      <tr><th>Name</th><th>Student ID</th><th>Role</th><th>Status</th><th class="right">Balance</th><th class="right">Actions</th></tr>
+      </thead>
+      <tbody>
+      <tr th:each="u : ${page.content}">
+        <td><span th:text="${u.fullName()}">Aisyah Rahman</span><span class="sub" th:text="${u.email()}">aisyah@campus.edu.my</span></td>
+        <td class="mono" th:text="${u.studentId() ?: '-'}">A21CS0001</td>
+        <td><span class="badge" th:classappend="${u.role().name() == 'ADMIN'} ? 'blue' : (${u.role().name() == 'MERCHANT'} ? 'yellow')" th:text="${u.role()}">USER</span></td>
+        <td>
+          <span class="badge red" th:if="${u.frozen()}"><svg th:replace="~{fragments/icons :: icon('lock')}"></svg>Frozen</span>
+          <span class="badge green" th:unless="${u.frozen()}">Active</span>
+        </td>
+        <td class="right num" th:text="${u.balance() != null} ? ${@fmt.money(u.balance())} : '-'">RM 12.00</td>
+        <td class="right">
+          <div class="row-actions" th:if="${u.role().name() != 'ADMIN'}">
+            <a class="btn link" th:if="${u.role().name() == 'USER' and !u.frozen()}"
+               th:href="@{/admin/topup(recipient=${u.email()})}">Top up</a>
+            <form th:if="${!u.frozen()}" th:action="@{/admin/users/{id}/freeze(id=${u.id()})}" method="post" data-once>
+              <input type="hidden" name="q" th:value="${q}">
+              <button class="btn ghost small" type="submit"><svg th:replace="~{fragments/icons :: icon('lock')}"></svg>Freeze</button>
+            </form>
+            <form th:if="${u.frozen()}" th:action="@{/admin/users/{id}/unfreeze(id=${u.id()})}" method="post" data-once>
+              <input type="hidden" name="q" th:value="${q}">
+              <button class="btn ghost small" type="submit"><svg th:replace="~{fragments/icons :: icon('unlock')}"></svg>Unfreeze</button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      <tr th:unless="${page.hasContent()}"><td colspan="6" class="muted">No users match that search.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <nav th:replace="~{fragments/ui :: pager(${page},
+          @{/admin/users(q=${q}, page=${page.number - 1})},
+          @{/admin/users(q=${q}, page=${page.number + 1})})}"></nav>
+</main>
+</body>
+</html>
