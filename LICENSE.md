@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Wan Amirul
+Copyright (c) 2026 Wan Amirul Amir bin Wan Romzi
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

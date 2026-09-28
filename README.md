@@ -1,5 +1,7 @@
 # Campus E-Wallet
 
+![Campus E-Wallet: a phone showing the wallet home screen, with a balanced ledger entry and a list of what's under the hood](docs/thumbnail/thumbnail.png)
+
 A campus e-wallet for top-ups, student-to-student transfers and merchant payments, with admin reports. It runs on a double-entry ledger, so every ringgit can be traced and the books always sum to zero.
 
 > Learning and portfolio project. No real money and no payment gateway. Top-ups are simulated.
